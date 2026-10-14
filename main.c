@@ -1,26 +1,7 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include "main.h"
+#include "helper.h"
+#include "lexer.h"
 
-#define NAME_BUFFER_SIZE 512
-int get_filesize(FILE *source);
-
-int get_filesize(FILE *source)
-{
-    char c;
-    int filesize_counter = 0;
-    while(fread(&c, sizeof(char), 1, source))
-    {
-        if (c == EOF)
-        {
-            break;
-        }
-        filesize_counter++;
-    }
-
-    rewind(source);
-    return filesize_counter;
-}
 
 int main(int argc, char *argv[])
 {
@@ -34,10 +15,18 @@ int main(int argc, char *argv[])
 
 
     /* check for correct filetype */
-    char *dot_pos = strchr(argv[1], '.'); 
-    int pos_filename_end = dot_pos - argv[1];
-    if ((argv[1][pos_filename_end + 2] != 'n' && argv[1][pos_filename_end + 3] == '\0')
-        || (sizeof(argv[1]) > (unsigned long)(pos_filename_end + 3)))
+    char *filename = argv[1];
+    char *dot_pos = strchr(filename, '.');
+    if (dot_pos == NULL)
+    {
+        fprintf(stderr, "USE .n FILES ONLY\n");
+        return 1;
+    }
+
+    int pos_filename_end = dot_pos - filename;
+
+    if ((filename[pos_filename_end + 2] != 'n' && filename[pos_filename_end + 3] == '\0')
+        || (strlen(filename) > (unsigned long)(pos_filename_end + 2)))
     {
         fprintf(stderr, "USE .n FILES ONLY\n");
         return 1;
@@ -56,18 +45,24 @@ int main(int argc, char *argv[])
 
 
     /* create file to parse */
-    
+    if (strlen(filename) >= NAME_BUFFER_SIZE)
+    {
+        fprintf(stderr, "FILENAME TOO LARGE\n");
+        return 1;
+    }
     char parsed_name[NAME_BUFFER_SIZE];
     char append[] = ".target";
-    for (int i = 0; argv[1][i] != '.'; i++)
-    {
-        parsed_name[i] = argv[1][i];
-    }
+
 
     size_t remaining_space = sizeof(parsed_name) - strlen(parsed_name) - 1;
+    strncat(parsed_name, filename, remaining_space);
+
+    parsed_name[strlen(parsed_name) - 2] = '\0';
+
+    remaining_space = sizeof(parsed_name) - strlen(parsed_name) - 1;
     strncat(parsed_name, append, remaining_space);
 
-    FILE *parsed = fopen(argv[1], "rw");
+    FILE *parsed = fopen(parsed_name, "w+");
     if(parsed == NULL)
     {
         fprintf(stderr, "FAILED TO OPEN %s\n", parsed_name);
@@ -93,9 +88,11 @@ int main(int argc, char *argv[])
     free(buffer);
     ////////////////////////////////////////////////////
 
-    /* parse source code */
-
+    /* lex source code */
+    lexer(parsed);
     ////////////////////////////////////////////////////
+
+
 
     /* closing statements */
     if (remove(parsed_name) != 0) 
@@ -108,3 +105,10 @@ int main(int argc, char *argv[])
     return 0;
     ////////////////////////////////////////////////////
 }
+
+
+        /*if (file[index.one] == '\n')
+        {
+            column = 0;
+            line++;
+        } */ 
