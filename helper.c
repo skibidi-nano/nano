@@ -1,6 +1,6 @@
 #include "helper.h"
 
-bool string_is_alnum(char *str)
+bool string_is_digit(char *str)
 {
     if (*str == '\0')
     {
@@ -9,7 +9,7 @@ bool string_is_alnum(char *str)
 
     while (*str) 
     {
-        if (!isalnum((unsigned char)*str)) 
+        if (!isdigit((unsigned char)*str)) 
         {
             return false;
         }
@@ -18,19 +18,49 @@ bool string_is_alnum(char *str)
     return true;
 }
 
-int get_filesize(FILE *source)
+bool string_is_puncdig(char *str)
 {
-    char c;
-    int filesize_counter = 0;
-    while(fread(&c, sizeof(char), 1, source))
+    if (*str == '\0')
     {
-        if (c == EOF)
-        {
-            break;
-        }
-        filesize_counter++;
+        return false;
     }
 
-    rewind(source);
-    return filesize_counter;
+    while (*str) 
+    {
+        if (!isdigit((unsigned char)*str) && *str != '_') 
+        {
+            return false;
+        }
+        str++;
+    }
+    return true;
+}
+
+size_t get_filesize(FILE *source)
+{
+    if (fseek(source, 0L, SEEK_END) != 0) 
+    {
+        return -1;
+    }
+
+    size_t size = ftell(source);
+    rewind(source); 
+
+    return size;
+}
+
+bool assign_buffer_literal(char *string_literal, char *buffer)
+{
+    string_literal = malloc(strlen(buffer + 1));
+    if (string_literal == NULL) 
+    {
+        return false;
+    }
+
+    to_free[tf_index] = string_literal;
+    tf_index++;
+
+    strcpy(string_literal, buffer); 
+
+    return 0;
 }
