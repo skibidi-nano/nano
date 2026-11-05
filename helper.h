@@ -1,42 +1,19 @@
+#ifndef HELPER_H
+
+#define HELPER_H
+
+#include <main.h>
 #include <stdio.h>
+#include <stdbool.h>
+#include <ctype.h>
+#include <stdlib.h>
+#include <string.h>
 
-typedef enum
-{
-    KEYWORD,
-    IDENTIFIER,
-    ASSIGNMENT_OP,
-    INT_LITERAL,
-    STRING,
-    N_BRACE_OP,
-    C_BRACE_OP,
-    B_BRACE_OP,
-    N_BRACE_CL,
-    C_BRACE_CL,
-    B_BRACE_CL,
-    PLUS,
-    MINUS,
-    SLASH,
-    AMPERSAND,
-}
-label;
+bool string_is_digit(char *str);
+bool string_is_puncdig(char *str);
 
-typedef struct
-{
-    label token_type;
-    char *string_literal;
-    int line;
-    int column;
-}
-token;
+size_t get_filesize(FILE *source);
 
-typedef struct
-{
-    int one;
-    int two;
-    int buffer;
-}
-index_type;
+bool assign_buffer_literal(char *string_literal, char *buffer);
 
-bool string_is_alnum(char *str);
-
-int get_filesize(FILE *source);
+#endif

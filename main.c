@@ -43,72 +43,46 @@ int main(int argc, char *argv[])
     }
     ////////////////////////////////////////////////////
 
-
-    /* create file to parse */
-    if (strlen(filename) >= NAME_BUFFER_SIZE)
-    {
-        fprintf(stderr, "FILENAME TOO LARGE\n");
-        return 1;
-    }
-    char parsed_name[NAME_BUFFER_SIZE];
-    char append[] = ".target";
-
-
-    size_t remaining_space = sizeof(parsed_name) - strlen(parsed_name) - 1;
-    strncat(parsed_name, filename, remaining_space);
-
-    parsed_name[strlen(parsed_name) - 2] = '\0';
-
-    remaining_space = sizeof(parsed_name) - strlen(parsed_name) - 1;
-    strncat(parsed_name, append, remaining_space);
-
-    FILE *parsed = fopen(parsed_name, "w+");
-    if(parsed == NULL)
-    {
-        fprintf(stderr, "FAILED TO OPEN %s\n", parsed_name);
-        return 1;
-    }
-
-    size_t filesize = get_filesize(source);
-
-    char *buffer = malloc(filesize);
-    if (buffer == NULL) 
-    {
-        fprintf(stderr,"MALLOC FAILED\n");
-        return 1;
-    }
-
-    size_t bytes_read = fread(buffer, 1, filesize, source);
-    size_t bytes_written = fwrite(buffer, 1, bytes_read, parsed);
-    if (bytes_written < bytes_read) 
-    {
-        fprintf(stderr,"FAILED TO WRITE TO PARSED FILE FROM SOURCE CODE\n");
-    }
-
-    free(buffer);
-    ////////////////////////////////////////////////////
+    to_free[] = malloc (TOKEN_LITERAL_SIZE);
 
     /* lex source code */
-    lexer(parsed);
-    ////////////////////////////////////////////////////
-
-
-
-    /* closing statements */
-    if (remove(parsed_name) != 0) 
+    static token tokens[TEMPORARY_TOKEN_ARR_SIZE_WILL_BE_DYNAMIC_SOON];
+    int last_token_index = lexer(tokens, source);
+    if (last_token_index == -1)
     {
-        fprintf(stderr,"FAILED TO REMOVE %s\n", parsed_name);
+        fprintf(stderr,"FAILED TO ALLOCATE MEMORY WHILE LEXING\n");
         fclose(source);
         return 1;
     }
+    else if (last_token_index == -2)
+    {
+        fprintf(stderr,"NOT ENOUGH MEMORY FOR FILE ARRAY\n");
+        fclose(source);
+        return 1;
+    }
+    else if (last_token_index == -3)
+    {
+        fprintf(stderr,"NOT ENOUGH MEMORY FOR TOKEN ARRAY\n");
+        fclose(source);
+        return 1;
+    }
+    ////////////////////////////////////////////////////
+
+    /* DEBUG OUTPUT */
+    /*FILE *debug = fopen("debug.dbg", "w");
+    fwrite(tokens->string_literal, sizeof(tokens), 1, debug);*/
+
+
+    /* closing statements */
+    if (tf_index > 0)
+    {
+        for (int i = 0; i < (tf_index - 1); i++)
+        {
+            free(to_free[i]);
+        }
+    }
+    
     fclose(source);
     return 0;
     ////////////////////////////////////////////////////
 }
-
-
-        /*if (file[index.one] == '\n')
-        {
-            column = 0;
-            line++;
-        } */ 
