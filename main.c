@@ -3,6 +3,9 @@
 #include "lexer.h"
 
 
+char **to_free;
+int tf_index;
+
 int main(int argc, char *argv[])
 {
     /* check args */
@@ -43,7 +46,7 @@ int main(int argc, char *argv[])
     }
     ////////////////////////////////////////////////////
 
-    to_free[] = malloc (TOKEN_LITERAL_SIZE);
+    to_free = malloc(TOKEN_LITERAL_SIZE * sizeof(char *));
 
     /* lex source code */
     static token tokens[TEMPORARY_TOKEN_ARR_SIZE_WILL_BE_DYNAMIC_SOON];
@@ -68,19 +71,13 @@ int main(int argc, char *argv[])
     }
     ////////////////////////////////////////////////////
 
-    /* DEBUG OUTPUT */
-    /*FILE *debug = fopen("debug.dbg", "w");
-    fwrite(tokens->string_literal, sizeof(tokens), 1, debug);*/
-
+    for (int i = 0; i < last_token_index; i++)
+    {
+        printf("%s\n", tokens[i].line);
+    }
 
     /* closing statements */
-    if (tf_index > 0)
-    {
-        for (int i = 0; i < (tf_index - 1); i++)
-        {
-            free(to_free[i]);
-        }
-    }
+    free(to_free);
     
     fclose(source);
     return 0;

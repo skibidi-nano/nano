@@ -1,5 +1,1 @@
-<<<<<<< HEAD
-for int 123 /* for */ assdafarf
-=======
-for = int test 123
->>>>>>> b0fc53b (feat: made the lexer somewhat functional, stil wip)
+for int /* for */ 123 assdafarf

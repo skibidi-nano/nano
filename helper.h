@@ -2,7 +2,7 @@
 
 #define HELPER_H
 
-#include <main.h>
+#include "main.h"
 #include <stdio.h>
 #include <stdbool.h>
 #include <ctype.h>

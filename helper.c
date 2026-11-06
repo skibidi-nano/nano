@@ -57,10 +57,16 @@ bool assign_buffer_literal(char *string_literal, char *buffer)
         return false;
     }
 
+    to_free = realloc(to_free, TOKEN_LITERAL_SIZE * sizeof(char *) * (tf_index + 1));
+    if (to_free == NULL) 
+    {
+        return false;
+    }
+
     to_free[tf_index] = string_literal;
     tf_index++;
 
     strcpy(string_literal, buffer); 
 
-    return 0;
+    return 1;
 }
