@@ -1,1 +1,1 @@
-for = int test 123
+for int /* for */ 123 assdafarf

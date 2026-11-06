@@ -29,14 +29,14 @@ int lexer(token *tokens, FILE *target)
     {
         column++;
 
-        unsigned char c = file[file_index];
+        volatile unsigned char c = file[file_index];
 
         if ((file_index + 1) >= filesize + 1)
         {
             free(file);
             return -2;
         }
-        unsigned char peek = file[file_index + 1];
+        volatile unsigned char peek = file[file_index + 1];
 
         if (c == '\0')
         {
@@ -163,7 +163,7 @@ token scan_string(void)
     {
         buffer[buffer_index] = file[file_index];
 
-        if ((file_index + 1) >= bytes_read)
+        if ((file_index + 1) > bytes_read)
         {
             current_token.token_type = ERROR;
             break;
@@ -241,7 +241,7 @@ token scan_punct(void)
         peek++;
     }
 
-    strcpy(current_token.string_literal, buffer);
+    assign_buffer_literal(current_token.string_literal, buffer);
 
     return current_token;
 }
@@ -264,7 +264,7 @@ token scan_char(void)
             break;
         }
 
-        if ((file_index + 1) >= bytes_read)
+        if ((file_index + 1) > bytes_read)
         {
             current_token.token_type = ERROR;
             break;
@@ -316,7 +316,7 @@ token scan_num(void)
             break;
         }
 
-        if ((file_index + 1) >= bytes_read)
+        if ((file_index + 1) > bytes_read)
         {
             current_token.token_type = ERROR;
             break;
@@ -332,7 +332,7 @@ token scan_num(void)
 
     buffer[buffer_index] = '\0';
     
-    strcpy(current_token.string_literal, buffer);
+    assign_buffer_literal(current_token.string_literal, buffer);
 
     return current_token;
 }
