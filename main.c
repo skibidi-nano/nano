@@ -68,7 +68,7 @@ int main(int argc, char *argv[])
 
     for (int i = 0; i < last_token_index; i++)
     {
-        printf("%i\n", tokens[i].string_literal);
+        printf("%s\n", tokens[i].string_literal);
     }
 
     /* closing statements */

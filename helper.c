@@ -49,17 +49,15 @@ size_t get_filesize(FILE *source)
     return size;
 }
 
-bool assign_buffer_literal(char **string_literal, char *buffer)
+char* assign_buffer_literal(char *buffer)
 {
-    string_literal = malloc(strlen(buffer + 1));
+    char *string_literal = malloc(strlen(buffer + 1));
     if (string_literal == NULL) 
     {
-        return false;
+        return NULL;
     }
 
-    (*string_literal) = malloc(strlen(buffer) + 1);
+    strcpy(string_literal, buffer);
 
-    strcpy(*string_literal, buffer); /* TROUBLEMAKER FIX ASAP */
-
-    return 1;
+    return string_literal;
 }

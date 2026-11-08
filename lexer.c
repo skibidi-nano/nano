@@ -205,7 +205,7 @@ token scan_string(void)
 
     buffer[buffer_index] = '\0';
 
-    assign_buffer_literal(&current_token.string_literal, buffer);
+    current_token.string_literal = assign_buffer_literal(buffer);
 
     return current_token;
 }
@@ -250,7 +250,7 @@ token scan_punct(void)
         peek++;
     }
 
-    assign_buffer_literal(&current_token.string_literal, buffer);
+    current_token.string_literal = assign_buffer_literal(buffer);
 
     return current_token;
 }
@@ -287,7 +287,7 @@ token scan_char(void)
         buffer_index++;
     }
 
-    assign_buffer_literal(&current_token.string_literal, buffer);
+    current_token.string_literal = assign_buffer_literal(buffer);
 
     return current_token;
 }
@@ -341,7 +341,7 @@ token scan_num(void)
 
     buffer[buffer_index] = '\0';
     
-    assign_buffer_literal(&current_token.string_literal, buffer);
+    current_token.string_literal = assign_buffer_literal(buffer);
 
     return current_token;
 }
