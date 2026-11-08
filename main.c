@@ -3,9 +3,6 @@
 #include "lexer.h"
 
 
-char **to_free;
-int tf_index;
-
 int main(int argc, char *argv[])
 {
     /* check args */
@@ -46,8 +43,6 @@ int main(int argc, char *argv[])
     }
     ////////////////////////////////////////////////////
 
-    to_free = malloc(TOKEN_LITERAL_SIZE * sizeof(char *));
-
     /* lex source code */
     static token tokens[TEMPORARY_TOKEN_ARR_SIZE_WILL_BE_DYNAMIC_SOON];
     int last_token_index = lexer(tokens, source);
@@ -73,11 +68,15 @@ int main(int argc, char *argv[])
 
     for (int i = 0; i < last_token_index; i++)
     {
-        printf("%s\n", tokens[i].line);
+        printf("%i\n", tokens[i].string_literal);
     }
 
     /* closing statements */
-    free(to_free);
+    int size_token_arr = sizeof(tokens) / sizeof(tokens[0]);
+    for (int i = 0; i < size_token_arr; i++)
+    {
+        free(tokens[i].string_literal);
+    }
     
     fclose(source);
     return 0;

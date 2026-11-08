@@ -14,6 +14,6 @@ bool string_is_puncdig(char *str);
 
 size_t get_filesize(FILE *source);
 
-bool assign_buffer_literal(char *string_literal, char *buffer);
+bool assign_buffer_literal(char **string_literal, char *buffer);
 
 #endif
