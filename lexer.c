@@ -108,7 +108,7 @@ int lexer(token *tokens, FILE *target)
                 file_index += 2;
                 continue;
             }
-            else if (slsl_comment)
+            else if (slst_comment)
             {
                 if ((file_index + 1) >= filesize + 1)
                 {
@@ -116,7 +116,7 @@ int lexer(token *tokens, FILE *target)
                     return -2;
                 }
             }
-            slsl_comment = true;
+            slst_comment = true;
             file_index++;
             continue;
         }

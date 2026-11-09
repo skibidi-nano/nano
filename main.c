@@ -69,6 +69,7 @@ int main(int argc, char *argv[])
     for (int i = 0; i < last_token_index; i++)
     {
         printf("%s\n", tokens[i].string_literal);
+        printf("%s\n", label_names[tokens[i].token_type]);
     }
 
     /* closing statements */

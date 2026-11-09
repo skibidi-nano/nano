@@ -1,1 +1,1 @@
-for int /* for */ 123 assdafarf
+for int 123 /* for */ assdafarf
