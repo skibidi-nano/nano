@@ -228,14 +228,14 @@ token scan_punct(void)
 
             buffer[buffer_index] = file[peek];
             buffer[buffer_index + 1] = '\0';
-            if (match_types(buffer, PUNCT) != ERROR)
+            if (hash_string_label(buffer) != IDENTIFIER)
             {
-                current_token.token_type = match_types(buffer, PUNCT);
+                current_token.token_type = hash_string_label(buffer);
             }
             else
             {
                 buffer[buffer_index] = '\0';
-                current_token.token_type = match_types(buffer, PUNCT);
+                current_token.token_type = hash_string_label(buffer);
             }
 
             break;
@@ -269,7 +269,7 @@ token scan_char(void)
         if (!isalnum(buffer[buffer_index]) && buffer[buffer_index] != '_')
         {
             buffer[buffer_index] = '\0';
-            current_token.token_type = match_types(buffer, CHARS);
+            current_token.token_type = hash_string_label(buffer);
             break;
         }
 
@@ -346,166 +346,367 @@ token scan_num(void)
     return current_token;
 }
 
-label match_types(char *input, type type)
+label hash_string_label(const char *str) 
 {
-    switch (type)
+    label current_label;
+
+    switch (hash_djb2(str))
     {
-        case PUNCT:
-            if (!strcmp(input, "("))
+        case HASH_INT:
+            if(strcmp("int", str) == 0)
             {
-                return PUNCT_LPAREN;
+                current_label = KW_INT;
             }
-            else if (!strcmp(input, ")"))
+            else
             {
-                return PUNCT_RPAREN;
+                current_label = fallback_label(str);
             }
-            else if (!strcmp(input, "["))
+            break;
+        case HASH_CHAR:
+            if(strcmp("char", str) == 0)
             {
-                return PUNCT_LBRACKET;
+                current_label = KW_CHAR;
             }
-            else if (!strcmp(input, "]"))
+            else
             {
-                return PUNCT_RBRACKET;
+                current_label = fallback_label(str);
             }
-            else if (!strcmp(input, "{"))
+            break;
+        case HASH_BOOL:
+            if(strcmp("bool", str) == 0)
             {
-                return PUNCT_LBRACE;
+                current_label = KW_BOOL;
             }
-            else if (!strcmp(input, "}"))
+            else
             {
-                return PUNCT_RBRACE;
+                current_label = fallback_label(str);
             }
-            else if (!strcmp(input, ":"))
+            break;
+        case HASH_FLOAT:
+            if(strcmp("float", str) == 0)
             {
-                return PUNCT_COLON;
+                current_label = KW_FLOAT;
             }
-            else if (!strcmp(input, ";"))
+            else
             {
-                return PUNCT_SCOLON;
+                current_label = fallback_label(str);
             }
-            else if (!strcmp(input, ","))
+            break;
+        case HASH_WHILE:
+            if(strcmp("while", str) == 0)
             {
-                return PUNCT_COMMA;
+                current_label = KW_WHILE;
             }
-            else if (!strcmp(input, "."))
+            else
             {
-                return PUNCT_FULLSTOP;
+                current_label = fallback_label(str);
             }
-            else if (!strcmp(input, "="))
+            break;
+        case HASH_FOR:
+            if(strcmp("for", str) == 0)
             {
-                return OP_ASSIGN;
-            }   
-            else if (!strcmp(input, "=="))
-            {
-                return OP_EQ;
+                current_label = KW_FOR;
             }
-            else if (!strcmp(input, "!="))
+            else
             {
-                return OP_NOT_EQ;
+                current_label = fallback_label(str);
             }
-            else if (!strcmp(input, ">"))
+            break;
+        case HASH_IF:
+            if(strcmp("if", str) == 0)
             {
-                return OP_GT;
+                current_label = KW_IF;
             }
-            else if (!strcmp(input, "<"))
+            else
             {
-                return OP_LT;
+                current_label = fallback_label(str);
             }
-            else if (!strcmp(input, ">="))
+            break;
+        case HASH_ELSE:
+            if(strcmp("else", str) == 0)
             {
-                return OP_GE;
+                current_label = KW_ELSE;
             }
-            else if (!strcmp(input, "<="))
+            else
             {
-                return OP_LE;
+                current_label = fallback_label(str);
             }
-            else if (!strcmp(input, "+"))
-            {
-                return OP_PLUS;
-            }
-            else if (!strcmp(input, "-"))
-            {
-                return OP_MINUS;
-            }
-            else if (!strcmp(input, "*"))
-            {
-                return OP_MULT;
-            }
-            else if (!strcmp(input, "/"))
-            {
-                return OP_DIV;
-            }
-            else if (!strcmp(input, "\%"))
-            {
-                return OP_MOD;
-            }
-            else if (!strcmp(input, "&&"))
-            {
-                return OP_AND;
-            }
-            else if (!strcmp(input, "||"))
-            {
-                return OP_OR;
-            }
-            else if (!strcmp(input, "!"))
-            {
-                return OP_NOT;
-            }
-
             break;
 
+        /* PUNCTUATION */
+        case HASH_LPAREN:
+            if(strcmp("(", str) == 0)
+            {
+                current_label = PUNCT_LPAREN;
+            }
+            else
+            {
+                current_label = fallback_label(str);
+            }
+            break;
+        case HASH_RPAREN:
+            if(strcmp(")", str) == 0)
+            {
+                current_label = PUNCT_RPAREN;
+            }
+            else
+            {
+                current_label = fallback_label(str);
+            }
+            break;
+        case HASH_LBRACKET:
+            if(strcmp("[", str) == 0)
+            {
+                current_label = PUNCT_LBRACKET;
+            }
+            else
+            {
+                current_label = fallback_label(str);
+            }
+            break;
+        case HASH_RBRACKET:
+            if(strcmp("]", str) == 0)
+            {
+                current_label = PUNCT_RBRACKET;
+            }
+            else
+            {
+                current_label = fallback_label(str);
+            }
+            break;
+        case HASH_LBRACE:
+            if(strcmp("{", str) == 0)
+            {
+                current_label = PUNCT_LBRACE;
+            }
+            else
+            {
+                current_label = fallback_label(str);
+            }
+            break;
+        case HASH_RBRACE:
+            if(strcmp("}", str) == 0)
+            {
+                current_label = PUNCT_RBRACE;
+            }
+            else
+            {
+                current_label = fallback_label(str);
+            }
+            break;
+        case HASH_SEMCOL:
+            if(strcmp(";", str) == 0)
+            {
+                current_label = PUNCT_SCOLON;
+            }
+            else
+            {
+                current_label = fallback_label(str);
+            }
+            break;
+        case HASH_COL:
+            if(strcmp(":", str) == 0)
+            {
+                current_label = PUNCT_COLON;
+            }
+            else
+            {
+                current_label = fallback_label(str);
+            }
+            break;
+        case HASH_COMMA:
+            if(strcmp(",", str) == 0)
+            {
+                current_label = PUNCT_COMMA;
+            }
+            else
+            {
+                current_label = fallback_label(str);
+            }
+            break;
+        case HASH_FSTOP:
+            if(strcmp(".", str) == 0)
+            {
+                current_label = PUNCT_FULLSTOP;
+            }
+            else
+            {
+                current_label = fallback_label(str);
+            }
+            break;
 
-        case CHARS:
+        /* OPERATORS */
 
-            if (strlen(input) == 1)
+        /* ASSIGN */
+        case HASH_ASSIGN:
+            if(strcmp("=", str) == 0)
             {
-                return LITERAL_CHAR;
+                current_label = OP_ASSIGN;
             }
-            else if(!strcmp(input, "int"))
+            else
             {
-                return KW_INT;
+                current_label = fallback_label(str);
             }
-            else if(!strcmp(input, "bool"))
-            {
-                return KW_BOOL;
-            }
-            else if(!strcmp(input, "char"))
-            {
-                return KW_CHAR;
-            }
-            else if(!strcmp(input, "float"))
-            {
-                return KW_FLOAT;
-            }
-            else if(!strcmp(input, "if"))
-            {
-                return KW_IF;
-            }
-            else if(!strcmp(input, "else"))
-            {
-                return KW_ELSE;
-            }
-            else if(!strcmp(input, "while"))
-            {
-                return KW_WHILE;
-            }
-            else if(!strcmp(input, "for"))
-            {
-                return KW_FOR;
-            }
-            else if(string_is_digit(input))
-            {
-                break;
-            }
-            else if(string_is_puncdig(input))
-            {
-                break;
-            }
+            break;
 
-            return IDENTIFIER;
+        /* ARITHMETIC */
+        case HASH_SUBT:
+            if(strcmp("-", str) == 0)
+            {
+                current_label = OP_SUBT;
+            }
+            else
+            {
+                current_label = fallback_label(str);
+            }
+            break;
+        case HASH_ADD:
+            if(strcmp("+", str) == 0)
+            {
+                current_label = OP_ADD;
+            }
+            else
+            {
+                current_label = fallback_label(str);
+            }
+            break;
+        case HASH_MULT:
+            if(strcmp("*", str) == 0)
+            {
+                current_label = OP_MULT;
+            }
+            else
+            {
+                current_label = fallback_label(str);
+            }
+            break;
+        case HASH_DIV:
+            if(strcmp("/", str) == 0)
+            {
+                current_label = OP_DIV;
+            }
+            else
+            {
+                current_label = fallback_label(str);
+            }
+            break;
+        case HASH_MOD:
+            if(strcmp("\%", str) == 0)
+            {
+                current_label = OP_MOD;
+            }
+            else
+            {
+                current_label = fallback_label(str);
+            }
+            break;
+
+        /* CMP/LOGIC */
+        case HASH_EQ:
+            if(strcmp("==", str) == 0)
+            {
+                current_label = OP_EQ;
+            }
+            else
+            {
+                current_label = fallback_label(str);
+            }
+            break;
+        case HASH_UNEQ:
+            if(strcmp("!=", str) == 0)
+            {
+                current_label = OP_UNEQ;
+            }
+            else
+            {
+                current_label = fallback_label(str);
+            }
+            break;
+        case HASH_GT:
+            if(strcmp(">", str) == 0)
+            {
+                current_label = OP_GT;
+            }
+            else
+            {
+                current_label = fallback_label(str);
+            }
+            break;
+        case HASH_LT:
+            if(strcmp("<", str) == 0)
+            {
+                current_label = OP_LT;
+            }
+            else
+            {
+                current_label = fallback_label(str);
+            }
+            break;
+        case HASH_GTEQ:
+            if(strcmp(">=", str) == 0)
+            {
+                current_label = OP_GE;
+            }
+            else
+            {
+                current_label = fallback_label(str);
+            }
+            break;
+        case HASH_LTEQ:
+            if(strcmp("<=", str) == 0)
+            {
+                current_label = OP_LE;
+            }
+            else
+            {
+                current_label = fallback_label(str);
+            }
+            break;
+        case HASH_AND:
+            if(strcmp("&&", str) == 0)
+            {
+                current_label = OP_AND;
+            }
+            else
+            {
+                current_label = fallback_label(str);
+            }
+            break;
+        case HASH_OR:
+            if(strcmp("||", str) == 0)
+            {
+                current_label = OP_OR;
+            }
+            else
+            {
+                current_label = fallback_label(str);
+            }
+            break;
+        case HASH_NOT:
+            if(strcmp("!", str) == 0)
+            {
+                current_label = OP_NOT;
+            }
+            else
+            {
+                current_label = fallback_label(str);
+            }
+            break;
         default:
-            break;
+            current_label = fallback_label(str);
     }
+    
+    return current_label; 
+}
 
-    return ERROR;
+label fallback_label(const char *str)
+{
+    if (string_is_sing_char(str))
+    {
+        return LITERAL_CHAR;
+    }
+    else
+    {
+        return IDENTIFIER;
+    }
 }

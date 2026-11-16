@@ -36,6 +36,24 @@ bool string_is_puncdig(char *str)
     return true;
 }
 
+bool string_is_sing_char(const char *str)
+{
+    if (*str == '\0')
+    {
+        return false;
+    }
+
+    while (*str) 
+    {
+        if (!isalpha((unsigned char)*str) || (strlen(str) != 1)) 
+        {
+            return false;
+        }
+        str++;
+    }
+    return true;
+}
+
 size_t get_filesize(FILE *source)
 {
     if (fseek(source, 0L, SEEK_END) != 0) 
@@ -60,4 +78,17 @@ char* assign_buffer_literal(char *buffer)
     strcpy(string_literal, buffer);
 
     return string_literal;
+}
+
+uint64_t hash_djb2(const char *str) 
+{
+    uint64_t hash = 5381;
+    int c;
+
+    while ((c = (unsigned char)*str++)) 
+    {
+        hash = ((hash << 5) + hash) + c; 
+    }
+
+    return hash;
 }

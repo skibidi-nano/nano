@@ -9,5 +9,6 @@ pkgs.mkShell {
     ncurses   
     valgrind
     cgdb
+    gperf
   ];
 }

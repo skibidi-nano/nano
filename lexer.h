@@ -5,6 +5,57 @@
 #include "main.h"
 #include "helper.h"
 
+#include <stdint.h>
+
+enum tokenhash: uint64_t 
+{
+    /* KEYWORDS */
+    HASH_INT      = 193495088ULL,    // int
+    HASH_CHAR     = 6385115235ULL,   // char
+    HASH_BOOL     = 6385087377ULL,   // bool
+    HASH_FLOAT    = 210712519067ULL, // float
+    HASH_WHILE    = 210732529790ULL, // while
+    HASH_FOR      = 193491852ULL,    // for
+    HASH_IF       = 5863476ULL,      // if
+    HASH_ELSE     = 6385192046ULL,   // else
+
+    /* PUNCTUATION */
+    HASH_LPAREN   = 177613ULL,       // (
+    HASH_RPAREN   = 177614ULL,       // )
+    HASH_LBRACKET = 177664ULL,       // [
+    HASH_RBRACKET = 177666ULL,       // ]
+    HASH_LBRACE   = 177696ULL,       // {
+    HASH_RBRACE   = 177698ULL,       // }
+    HASH_SEMCOL   = 177632ULL,       // ;
+    HASH_COL      = 177631ULL,       // :
+    HASH_COMMA    = 177617ULL,       // ,
+    HASH_FSTOP    = 177619ULL,       // .
+
+    /* OPERATORS */
+
+    /* ASSIGN */
+    HASH_ASSIGN       = 177634ULL,       // =
+
+    /* ARITHMETIC */
+    HASH_SUBT     = 177618ULL,       // -
+    HASH_ADD      = 177616ULL,       // +
+    HASH_MULT     = 177615ULL,       // *
+    HASH_DIV      = 177620ULL,       // /
+    HASH_MOD      = 177610ULL,       // %
+
+    /* CMP/LOGIC */
+    HASH_EQ      = 5861983ULL,      // ==
+    HASH_UNEQ     = 5861059ULL,      // !=
+    HASH_GT       = 177635ULL,       // >
+    HASH_LT       = 177633ULL,       // <
+    HASH_GTEQ     = 5862016ULL,      // >=
+    HASH_LTEQ     = 5861950ULL,      // <=
+    HASH_AND      = 5861201ULL,      // &&
+    HASH_OR       = 5864125ULL,      // ||
+    HASH_NOT      = 177606ULL        // !
+};
+
+
 typedef enum
 {
     STRING,
@@ -48,15 +99,15 @@ typedef enum
     OP_ASSIGN,
 
     /* ARITHMETIC */
-    OP_MINUS,
-    OP_PLUS,
+    OP_SUBT,
+    OP_ADD,
     OP_MULT,
     OP_DIV,
     OP_MOD,
 
     /* CMP */
     OP_EQ,
-    OP_NOT_EQ,
+    OP_UNEQ,
     OP_GT,
     OP_LT,
     OP_GE,
@@ -103,7 +154,8 @@ token scan_punct(void);
 token scan_char(void);
 token scan_num(void);
 
-label match_types(char *input, type type);
+label hash_string_label(const char *str);
+label fallback_label (const char *str);
 
 /* FOR DEBUGGING*/
 
